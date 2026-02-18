@@ -105,8 +105,8 @@ function getRSIArray(d, p=14) {
 function checkDivergence(prices, rsiArr) {
     const lastP = prices.at(-1), prevP = prices.at(-10);
     const lastR = rsiArr.at(-1), prevR = rsiArr.at(-10);
-    if(lastP > prevP && lastR < prevR) return "✅ 🐂 zmęczony byk";
-    if(lastP < prevP && lastR > prevR) return "✅ 🐻 zmęczony niedźwiedź";
+    if(lastP > prevP && lastR < prevR) return " 🐂 zmęczony byk";
+    if(lastP < prevP && lastR > prevR) return " 🐻 zmęczony niedźwiedź";
     return null;
 }
 
@@ -206,4 +206,5 @@ document.querySelectorAll(".tab").forEach(t=>{
 });
 </script>
 </body>
+
 </html>
