@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent v4.3 - Vertical SL/TP Layout</title>
+<title>Agent v5.0 - Hunter Mode</title>
 
 <style>
 body{margin:0;padding:20px;font-family:system-ui;background:#0b0d12;color:#e5e7eb}
@@ -31,7 +31,14 @@ canvas.active{display:block}
 
 .details{font-size:12px;text-align:left;margin-top:8px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;line-height:1.6; display:none}
 .details.active{display:block}
-.details span{color:#818cf8;font-weight:600}
+
+/* Hunter UI Cards */
+.hunter-grid {display: flex; gap: 8px; margin-top: 10px;}
+.hunter-card {flex: 1; padding: 8px; border-radius: 8px; text-align: center;}
+.card-stop {background: rgba(63, 81, 181, 0.2); border: 1px solid #3f51b5;}
+.card-limit {background: rgba(46, 125, 50, 0.2); border: 1px solid #2e7d32;}
+.hunter-card h5 {margin: 0; font-size: 9px; text-transform: uppercase; color: #9ca3af;}
+.hunter-card div {font-weight: bold; font-size: 13px; margin-top: 4px;}
 
 button{width:100%;padding:12px;border-radius:8px;border:none;background:#4a4e78;color:#fff;cursor:pointer;font-weight:700; margin-bottom:10px}
 </style>
@@ -160,17 +167,44 @@ function showTF(id, tf) {
     const det = document.getElementById("details_"+id);
     const chart = document.getElementById("chart_"+id);
     
-    let sl=0, tp=0;
-    if(data.sig==="BUY"){ sl=data.price-data.atr*1.5; tp=data.price+data.atr*3; }
-    if(data.sig==="SELL"){ sl=data.price+data.atr*1.5; tp=data.price-data.atr*3; }
+    // Hunter Logic v5.0
+    let sl=0, tp=0, hStop=0, hLimit=0;
+    const atrFactor = data.atr * 1.5;
+
+    if(data.sig==="BUY"){ 
+        sl = data.price - atrFactor; 
+        tp = data.price + (data.atr * 3); 
+        hStop = (data.SR.resistances[0] || data.price) + atrFactor;
+        hLimit = (data.SR.supports[0] || data.price - (data.atr * 2));
+    }
+    if(data.sig==="SELL"){ 
+        sl = data.price + atrFactor; 
+        tp = data.price - (data.atr * 3); 
+        hStop = (data.SR.supports[0] || data.price) - atrFactor;
+        hLimit = (data.SR.resistances[0] || data.price + (data.atr * 2));
+    }
 
     det.innerHTML = `
-        <div style="text-align:center; font-weight:bold" class="${data.cls}">${data.sig} (${tf})</div>
-        <div style="text-align:center; color:#fbbf24; font-size:12px; margin: 5px 0">${data.div ? data.div : ""}</div>
-        Price: <span>${smartF(data.price)}</span><br>
-        SL: <span style="color:#ef4444">${sl?smartF(sl):'---'}</span><br>
-        TP: <span style="color:#22c55e">${tp?smartF(tp):'---'}</span><br>
-        ATR: ${data.atr.toFixed(4)} | RSI: ${data.rsi.toFixed(1)}
+        <div style="text-align:center; font-weight:bold" class="${data.cls}">${data.sig} HUNTER MODE (${tf})</div>
+        <div style="text-align:center; color:#fbbf24; font-size:11px; margin: 3px 0">${data.div ? data.div : "Brak dywergencji - czysty impet"}</div>
+        
+        <div class="hunter-grid">
+            <div class="hunter-card card-stop">
+                <h5>Breakout (STOP)</h5>
+                <div style="color:#818cf8">${hStop ? smartF(hStop) : '---'}</div>
+            </div>
+            <div class="hunter-card card-limit">
+                <h5>Retrace (LIMIT)</h5>
+                <div style="color:#22c55e">${hLimit ? smartF(hLimit) : '---'}</div>
+            </div>
+        </div>
+
+        <div style="margin-top:10px; font-size:11px; display:grid; grid-template-columns: 1fr 1fr; gap:5px">
+            <div>Aktualna: <span style="color:#818cf8">${smartF(data.price)}</span></div>
+            <div>ATR: ${data.atr.toFixed(4)}</div>
+            <div>SL: <span style="color:#ef4444">${sl?smartF(sl):'---'}</span></div>
+            <div>TP: <span style="color:#22c55e">${tp?smartF(tp):'---'}</span></div>
+        </div>
     `;
     
     det.classList.add("active");
@@ -206,5 +240,4 @@ document.querySelectorAll(".tab").forEach(t=>{
 });
 </script>
 </body>
-
 </html>
