@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent v7.3 - Bestial Hunter</title>
+<title>Agent v7.3.1 - Bestial Hunter</title>
 <style>
     body{margin:0;padding:20px;font-family:system-ui;background:#0b0d12;color:#e5e7eb}
     .tabs{display:flex;justify-content:center;margin-bottom:20px}
@@ -26,6 +26,10 @@
     .info-row:last-child {border:none}
     .label {color:#9ca3af}
     .val {font-weight:bold; color:#fff}
+    
+    /* POPRAWKA: Żółty i cieńszy napis zmęczenia */
+    .div-text {color: #fbbf24; font-weight: 400;}
+
     canvas{width:100%; height:240px; background:#050505; border-radius:8px; margin-top:10px; display:none}
     canvas.active{display:block}
     button{width:100%;padding:12px;border-radius:8px;border:none;background:#818cf8;color:#fff;cursor:pointer;font-weight:700; margin-bottom:10px}
@@ -65,8 +69,8 @@ function calcRSI(prices) {
 function detectDivergence(prices, rsis) {
     const lastPrice = prices[prices.length - 1], prevPrice = prices[prices.length - 20];
     const lastRSI = rsis[rsis.length - 1], prevRSI = rsis[rsis.length - 20];
-    if (lastPrice < prevPrice && lastRSI > prevRSI) return "bull"; // Bullish Div
-    if (lastPrice > prevPrice && lastRSI < prevRSI) return "bear"; // Bearish Div
+    if (lastPrice < prevPrice && lastRSI > prevRSI) return "bull"; 
+    if (lastPrice > prevPrice && lastRSI < prevRSI) return "bear"; 
     return null;
 }
 
@@ -132,7 +136,10 @@ function updateUI(id, tf) {
     
     document.getElementById(`price_${id}`).innerText = d.price.toFixed(prec);
     document.getElementById(`entry_${id}`).innerText = d.avg.toFixed(prec);
-    document.getElementById(`div_info_${id}`).innerHTML = d.div === "bull" ? "🐂 Zmęczony Niedźwiedź" : d.div === "bear" ? "🐻 Zmęczony Byk" : "Brak Dywergencji";
+    
+    // POPRAWKA: Implementacja żółtego napisu
+    const divText = d.div === "bull" ? "🐂 Zmęczony Niedźwiedź" : d.div === "bear" ? "🐻 Zmęczony Byk" : "Brak Dywergencji";
+    document.getElementById(`div_info_${id}`).innerHTML = `<span class="div-text">${divText}</span>`;
     
     let entry = d.avg;
     let sl = d.sig === "BUY" ? entry - (d.atr * 1.8) : entry + (d.atr * 1.8);
@@ -156,25 +163,21 @@ function drawTacticalChart(canvas, d, sl, tp) {
     const getY = (v) => 220 - ((v - min) / (max - min) * 200); 
     const chartWidth = canvas.width * 0.70;
 
-    // S/R
     ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(239, 68, 68, 0.6)"; ctx.beginPath(); ctx.moveTo(0, getY(d.res)); ctx.lineTo(chartWidth, getY(d.res)); ctx.stroke();
     ctx.strokeStyle = "rgba(34, 197, 94, 0.6)"; ctx.beginPath(); ctx.moveTo(0, getY(d.sup)); ctx.lineTo(chartWidth, getY(d.sup)); ctx.stroke();
 
-    // Wykres
     ctx.setLineDash([]); ctx.strokeStyle = "#818cf8"; ctx.lineWidth = 1.2;
     ctx.beginPath();
     d.c.forEach((v, i) => { const x = (i / (d.c.length-1)) * chartWidth; i === 0 ? ctx.moveTo(x, getY(v)) : ctx.lineTo(x, getY(v)); });
     ctx.stroke();
 
-    // Kropka Ceny
     const lastY = getY(d.price);
     ctx.fillStyle = d.cls === "buy" ? "#22c55e" : d.cls === "sell" ? "#ef4444" : "#9ca3af";
     ctx.beginPath(); ctx.arc(chartWidth, lastY, 4, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#fff"; ctx.font = "bold 11px Arial";
     ctx.fillText(d.price.toFixed(d.price > 100 ? 2 : 4), chartWidth + 5, lastY + 4);
     
-    // Etykiety S/R
     ctx.font = "10px Arial";
     ctx.fillStyle = "#ef4444"; ctx.fillText("RES " + d.res.toFixed(2), chartWidth + 5, getY(d.res) + 3);
     ctx.fillStyle = "#22c55e"; ctx.fillText("SUP " + d.sup.toFixed(2), chartWidth + 5, getY(d.sup) + 3);
