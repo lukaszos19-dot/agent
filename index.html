@@ -3,75 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent v5.0 - Hunter Mode</title>
-
+<title>Agent v7.3 - Bestial Hunter</title>
 <style>
-body{margin:0;padding:20px;font-family:system-ui;background:#0b0d12;color:#e5e7eb}
-.tabs{display:flex;justify-content:center;margin-bottom:20px}
-.tab{padding:10px 20px;background:#444;margin:0 5px;border-radius:8px;cursor:pointer}
-.tab.active{background:#22c55e}
-.tab-content{display:none;flex-wrap:wrap;justify-content:center}
-.tab-content.active{display:flex}
-
-.box{width:350px;margin:10px;padding:15px;background:#1a1c28;border-radius:15px;text-align:center;box-shadow: 0 10px 25px rgba(0,0,0,0.5)}
-h3{margin:5px 0 15px 0; color:#818cf8}
-
-.mini-dash{display:flex; gap:8px; margin-bottom:15px}
-.mini-col{flex:1; padding:10px 5px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; border:1px solid transparent; transition: 0.2s; min-height: 55px}
-.mini-col:hover{background:rgba(255,255,255,0.1)}
-.mini-col.active{border-color:#818cf8; background:rgba(129,140,248,0.1)}
-.mini-col h4{margin:0; font-size:10px; color:#9ca3af; text-transform:uppercase}
-.mini-status{font-weight:700; font-size:13px; margin-top:5px}
-.mini-div{font-size:14px; margin-top:2px}
-
-.buy{color:#22c55e}.sell{color:#ef4444}.wait{color:#9ca3af}
-
-canvas{width:100%;height:130px;background:#050505;border-radius:8px;margin-top:10px; display:none}
-canvas.active{display:block}
-
-.details{font-size:12px;text-align:left;margin-top:8px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;line-height:1.6; display:none}
-.details.active{display:block}
-
-/* Hunter UI Cards */
-.hunter-grid {display: flex; gap: 8px; margin-top: 10px;}
-.hunter-card {flex: 1; padding: 8px; border-radius: 8px; text-align: center;}
-.card-stop {background: rgba(63, 81, 181, 0.2); border: 1px solid #3f51b5;}
-.card-limit {background: rgba(46, 125, 50, 0.2); border: 1px solid #2e7d32;}
-.hunter-card h5 {margin: 0; font-size: 9px; text-transform: uppercase; color: #9ca3af;}
-.hunter-card div {font-weight: bold; font-size: 13px; margin-top: 4px;}
-
-button{width:100%;padding:12px;border-radius:8px;border:none;background:#4a4e78;color:#fff;cursor:pointer;font-weight:700; margin-bottom:10px}
+    body{margin:0;padding:20px;font-family:system-ui;background:#0b0d12;color:#e5e7eb}
+    .tabs{display:flex;justify-content:center;margin-bottom:20px}
+    .tab{padding:10px 20px;background:#444;margin:0 5px;border-radius:8px;cursor:pointer}
+    .tab.active{background:#818cf8}
+    .tab-content{display:none;flex-wrap:wrap;justify-content:center}
+    .tab-content.active{display:flex}
+    .box{width:380px;margin:10px;padding:15px;background:#1a1c28;border-radius:15px;text-align:center;box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #2d2f3e}
+    h3{margin:5px 0 10px 0; color:#818cf8; text-transform: uppercase; letter-spacing: 1px; font-size: 16px}
+    .mini-dash{display:flex; gap:8px; margin-bottom:15px}
+    .mini-col{flex:1; padding:10px 5px; background:rgba(255,255,255,0.05); border-radius:10px; cursor:pointer; border:1px solid transparent; transition: 0.2s; min-height: 60px}
+    .mini-col.active{border-color:#818cf8; background:rgba(129,140,248,0.2)}
+    .mini-col h4{margin:0; font-size:9px; color:#9ca3af; text-transform:uppercase}
+    .mini-status{font-weight:700; font-size:11px; margin-top:4px; display:flex; flex-direction:column; align-items:center; gap:2px}
+    .beast-icon {font-size: 18px;}
+    .buy{color:#22c55e}.sell{color:#ef4444}.wait{color:#9ca3af}
+    .info-panel {margin-top:15px; padding:12px; background:rgba(0,0,0,0.2); border-radius:10px; text-align:left; font-size:13px; display:none}
+    .info-panel.active {display:block}
+    .info-row {display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05)}
+    .info-row:last-child {border:none}
+    .label {color:#9ca3af}
+    .val {font-weight:bold; color:#fff}
+    canvas{width:100%; height:240px; background:#050505; border-radius:8px; margin-top:10px; display:none}
+    canvas.active{display:block}
+    button{width:100%;padding:12px;border-radius:8px;border:none;background:#818cf8;color:#fff;cursor:pointer;font-weight:700; margin-bottom:10px}
 </style>
 </head>
-
 <body>
 
 <div class="tabs">
-    <div class="tab active" data-tab="crypto">Crypto</div>
-    <div class="tab" data-tab="fx">FX</div>
-    <div class="tab" data-tab="commodities">Commodities</div>
+    <div class="tab active" data-tab="commodities">Commodities</div>
+    <div class="tab" data-tab="crypto">Crypto</div>
+    <div class="tab" data-tab="fx">Forex</div>
 </div>
 
-<div id="crypto" class="tab-content active"></div>
+<div id="commodities" class="tab-content active"></div>
+<div id="crypto" class="tab-content"></div>
 <div id="fx" class="tab-content"></div>
-<div id="commodities" class="tab-content"></div>
 
 <script>
 const TWELVE_API_KEY="56019b818e414819ae637fc111228e3b";
-
 const instruments={
     crypto:[["Bitcoin","BTC","BTC/USD"],["Ethereum","ETH","ETH/USD"]],
     fx:[["EUR/USD","EURUSD","EUR/USD"],["USD/JPY","USDJPY","USD/JPY"],["EUR/JPY","EURJPY","EUR/JPY"],["GBP/USD","GBPUSD","GBP/USD"]],
-    commodities:[
-        ["GOLD","XAUUSD","XAU/USD"],
-        ["OIL","OIL","WTI"],
-        ["GAS","GAS","NATGAS"],
-        ["COFFEE","COFFEE","COFFEE"],
-        ["CORN","CORN","CORN"]
-    ]
+    commodities:[["GOLD","XAUUSD","XAU/USD"],["OIL","WTI","WTI"],["NATGAS","GAS","NATGAS"],["COFFEE","COFFEE","COFFEE"],["CORN","CORN","CORN"]]
 };
 
 const marketData = {};
+
+function calcRSI(prices) {
+    let gains = 0, losses = 0;
+    for (let i = prices.length - 14; i < prices.length; i++) {
+        let diff = prices[i] - prices[i - 1];
+        diff > 0 ? gains += diff : losses -= diff;
+    }
+    return 100 - (100 / (1 + (gains / (losses || 1))));
+}
+
+function detectDivergence(prices, rsis) {
+    const lastPrice = prices[prices.length - 1], prevPrice = prices[prices.length - 20];
+    const lastRSI = rsis[rsis.length - 1], prevRSI = rsis[rsis.length - 20];
+    if (lastPrice < prevPrice && lastRSI > prevRSI) return "bull"; // Bullish Div
+    if (lastPrice > prevPrice && lastRSI < prevRSI) return "bear"; // Bearish Div
+    return null;
+}
 
 for(const [cat,list] of Object.entries(instruments)){
     const el=document.getElementById(cat);
@@ -80,156 +77,107 @@ for(const [cat,list] of Object.entries(instruments)){
         <div class="box" id="box_${id}">
             <h3>${name}</h3>
             <div class="mini-dash">
-                <div class="mini-col" id="col_${id}_5min" onclick="showTF('${id}','5min')"><h4>Scalp</h4><div id="m5_${id}" class="mini-status">--</div><div id="d5_${id}" class="mini-div"></div></div>
-                <div class="mini-col" id="col_${id}_15min" onclick="showTF('${id}','15min')"><h4>Day</h4><div id="m15_${id}" class="mini-status">--</div><div id="d15_${id}" class="mini-div"></div></div>
-                <div class="mini-col" id="col_${id}_1h" onclick="showTF('${id}','1h')"><h4>Long</h4><div id="h1_${id}" class="mini-status">--</div><div id="dh1_${id}" class="mini-div"></div></div>
+                <div class="mini-col" id="col_${id}_5min" onclick="updateUI('${id}','5min')"><h4>Scalp</h4><div id="m5_${id}" class="mini-status">--</div></div>
+                <div class="mini-col" id="col_${id}_15min" onclick="updateUI('${id}','15min')"><h4>Day</h4><div id="m15_${id}" class="mini-status">--</div></div>
+                <div class="mini-col" id="col_${id}_1h" onclick="updateUI('${id}','1h')"><h4>Long</h4><div id="h1_${id}" class="mini-status">--</div></div>
             </div>
-            <button onclick="runAgentFull('${symbol}','${id}')">ANALIZUJ RYNEK</button>
-            <div id="details_${id}" class="details"></div>
-            <canvas id="chart_${id}"></canvas>
+            <button onclick="fetchData('${symbol}','${id}')">ANALIZUJ BESTIE</button>
+            <div id="panel_${id}" class="info-panel">
+                <div class="info-row"><span class="label">Aktualna Cena:</span> <span id="price_${id}" class="val">--</span></div>
+                <div class="info-row"><span class="label">Wejście (Limit):</span> <span id="entry_${id}" class="val" style="color:#818cf8">--</span></div>
+                <div class="info-row"><span class="label">Sygnał:</span> <span id="div_info_${id}" class="val">--</span></div>
+                <div class="info-row"><span class="label">Stop Loss:</span> <span id="sl_${id}" class="val" style="color:#ef4444">--</span></div>
+                <div class="info-row"><span class="label">Take Profit:</span> <span id="tp_${id}" class="val" style="color:#22c55e">--</span></div>
+            </div>
+            <canvas id="chart_${id}" width="350" height="240"></canvas>
         </div>`;
     });
 }
 
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const EMA=(d,p)=>{let k=2/(p+1),e=d[0];for(let i=1;i<d.length;i++)e=d[i]*k+e*(1-k);return e}
-const ATR=(h,l,c,p=14)=>{let t=[];for(let i=1;i<h.length;i++)t.push(Math.max(h[i]-l[i],Math.abs(h[i]-c[i-1]),Math.abs(l[i]-c[i-1])));return t.slice(-p).reduce((a,b)=>a+b,0)/p}
-const smartF=(v)=>v>100?v.toFixed(2):v.toFixed(5);
-
-function getRSIArray(d, p=14) {
-    let rsiArr = [];
-    for(let j=p; j<=d.length; j++) {
-        let g=0, l=0;
-        let slice = d.slice(j-p, j);
-        for(let i=0; i<slice.length-1; i++){
-            let x=slice[i+1]-slice[i]; x>0?g+=x:l-=x;
-        }
-        rsiArr.push(l===0?100:100-(100/(1+g/l)));
-    }
-    return rsiArr;
-}
-
-function checkDivergence(prices, rsiArr) {
-    const lastP = prices.at(-1), prevP = prices.at(-10);
-    const lastR = rsiArr.at(-1), prevR = rsiArr.at(-10);
-    if(lastP > prevP && lastR < prevR) return " 🐂 zmęczony byk";
-    if(lastP < prevP && lastR > prevR) return " 🐻 zmęczony niedźwiedź";
-    return null;
-}
-
-function getSupportResistance(closes){
-    const bins={};const precision=closes.at(-1)>100?1:1000;
-    closes.slice(-60).forEach(v=>{const k=Math.round(v*precision)/precision;bins[k]=(bins[k]||0)+1});
-    const zones=Object.entries(bins).filter(x=>x[1]>=2).map(x=>+x[0]);
-    const p=closes.at(-1);
-    return{ supports:zones.filter(x=>x<p).sort((a,b)=>b-a).slice(0,2), resistances:zones.filter(x=>x>p).sort((a,b)=>a-b).slice(0,2) }
-}
-
-async function runAgentFull(symbol, id) {
-    const tfs = ["5min", "15min", "1h"];
-    const labels = ["m5", "m15", "h1"];
-    const divLabels = ["d5", "d15", "dh1"];
+async function fetchData(symbol, id) {
+    const tfs = ["5min", "15min", "1h"], labels = ["m5", "m15", "h1"];
     marketData[id] = {};
-
     for(let i=0; i<tfs.length; i++) {
         document.getElementById(`${labels[i]}_${id}`).innerHTML = "...";
         try {
-            const r=await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=${tfs[i]}&outputsize=80&apikey=${TWELVE_API_KEY}`);
-            const d=await r.json();
-            if(!d.values) { document.getElementById(`${labels[i]}_${id}`).innerHTML="!"; continue; }
-            
+            const r=await fetch(`https://api.twelvedata.com/time_series?symbol=${symbol}&interval=${tfs[i]}&outputsize=50&apikey=${TWELVE_API_KEY}`);
+            const d=await r.json(); if(!d.values) continue;
             const v=d.values.reverse(), c=v.map(x=>+x.close), h=v.map(x=>+x.high), l=v.map(x=>+x.low);
-            const rsiArr=getRSIArray(c), rsi=rsiArr.at(-1);
-            const price=c.at(-1), ema9=EMA(c,9), ema21=EMA(c,21), atr=ATR(h,l,c);
-            const div = checkDivergence(c, rsiArr);
+            const rsis = c.map((_, idx) => idx > 14 ? calcRSI(c.slice(0, idx)) : 50);
+            const div = detectDivergence(c, rsis);
+            const price=c.at(-1), avg = c.slice(-20).reduce((a,b)=>a+b)/20;
+            const atr = (h.slice(-14).reduce((a,b,idx)=>a+(b-l.slice(-14)[idx]),0))/14;
+            const res = Math.max(...h.slice(-30)), sup = Math.min(...l.slice(-30));
             
-            let sig="WAIT", cls="wait";
-            if(ema9>ema21 && rsi>55) { sig="BUY"; cls="buy"; }
-            if(ema9<ema21 && rsi<45) { sig="SELL"; cls="sell"; }
-            
-            document.getElementById(`${labels[i]}_${id}`).innerHTML = `<span class="${cls}">${sig}</span>`;
-            document.getElementById(`${divLabels[i]}_${id}`).innerHTML = div ? (div.includes("🐂") ? "🐂" : "🐻") : "";
-            
-            marketData[id][tfs[i]] = { c, sig, cls, price, atr, rsi, div, SR: getSupportResistance(c) };
-            await sleep(1200); 
+            let sig="WAIT", cls="wait", icon="";
+            if(div === "bull") { sig="BUY"; cls="buy"; icon="<span class='beast-icon'>🐂</span>"; }
+            else if(div === "bear") { sig="SELL"; cls="sell"; icon="<span class='beast-icon'>🐻</span>"; }
+            else if(price > avg + (atr*0.3)) { sig="SELL"; cls="sell"; }
+            else if(price < avg - (atr*0.3)) { sig="BUY"; cls="buy"; }
+
+            document.getElementById(`${labels[i]}_${id}`).innerHTML = `${icon} <span class="${cls}">${sig}</span>`;
+            marketData[id][tfs[i]] = { c, price, avg, atr, res, sup, sig, cls, div };
+            await new Promise(r=>setTimeout(r,600));
         } catch(e) { console.log(e); }
     }
-    showTF(id, '15min');
+    updateUI(id, '15min');
 }
 
-function showTF(id, tf) {
-    const data = marketData[id] && marketData[id][tf];
-    if(!data) return;
-
+function updateUI(id, tf) {
+    const d = marketData[id] && marketData[id][tf]; if(!d) return;
     document.querySelectorAll(`#box_${id} .mini-col`).forEach(el => el.classList.remove('active'));
     document.getElementById(`col_${id}_${tf}`).classList.add('active');
-
-    const det = document.getElementById("details_"+id);
-    const chart = document.getElementById("chart_"+id);
+    document.getElementById(`panel_${id}`).classList.add('active');
+    const prec = d.price > 100 ? 2 : 4;
     
-    // Hunter Logic v5.0
-    let sl=0, tp=0, hStop=0, hLimit=0;
-    const atrFactor = data.atr * 1.5;
-
-    if(data.sig==="BUY"){ 
-        sl = data.price - atrFactor; 
-        tp = data.price + (data.atr * 3); 
-        hStop = (data.SR.resistances[0] || data.price) + atrFactor;
-        hLimit = (data.SR.supports[0] || data.price - (data.atr * 2));
-    }
-    if(data.sig==="SELL"){ 
-        sl = data.price + atrFactor; 
-        tp = data.price - (data.atr * 3); 
-        hStop = (data.SR.supports[0] || data.price) - atrFactor;
-        hLimit = (data.SR.resistances[0] || data.price + (data.atr * 2));
-    }
-
-    det.innerHTML = `
-        <div style="text-align:center; font-weight:bold" class="${data.cls}">${data.sig} HUNTER MODE (${tf})</div>
-        <div style="text-align:center; color:#fbbf24; font-size:11px; margin: 3px 0">${data.div ? data.div : "Brak dywergencji - czysty impet"}</div>
-        
-        <div class="hunter-grid">
-            <div class="hunter-card card-stop">
-                <h5>Breakout (STOP)</h5>
-                <div style="color:#818cf8">${hStop ? smartF(hStop) : '---'}</div>
-            </div>
-            <div class="hunter-card card-limit">
-                <h5>Retrace (LIMIT)</h5>
-                <div style="color:#22c55e">${hLimit ? smartF(hLimit) : '---'}</div>
-            </div>
-        </div>
-
-        <div style="margin-top:10px; font-size:11px; display:grid; grid-template-columns: 1fr 1fr; gap:5px">
-            <div>Aktualna: <span style="color:#818cf8">${smartF(data.price)}</span></div>
-            <div>ATR: ${data.atr.toFixed(4)}</div>
-            <div>SL: <span style="color:#ef4444">${sl?smartF(sl):'---'}</span></div>
-            <div>TP: <span style="color:#22c55e">${tp?smartF(tp):'---'}</span></div>
-        </div>
-    `;
+    document.getElementById(`price_${id}`).innerText = d.price.toFixed(prec);
+    document.getElementById(`entry_${id}`).innerText = d.avg.toFixed(prec);
+    document.getElementById(`div_info_${id}`).innerHTML = d.div === "bull" ? "🐂 Zmęczony Niedźwiedź" : d.div === "bear" ? "🐻 Zmęczony Byk" : "Brak Dywergencji";
     
-    det.classList.add("active");
-    chart.classList.add("active");
-    drawChart(id, data.c, data.sig, sl, tp, data.SR);
+    let entry = d.avg;
+    let sl = d.sig === "BUY" ? entry - (d.atr * 1.8) : entry + (d.atr * 1.8);
+    let tp = d.sig === "BUY" ? entry + (d.atr * 3.5) : entry - (d.atr * 3.5);
+    
+    document.getElementById(`sl_${id}`).innerText = sl.toFixed(prec);
+    document.getElementById(`tp_${id}`).innerText = tp.toFixed(prec);
+    
+    const canvas = document.getElementById("chart_"+id);
+    canvas.classList.add("active");
+    drawTacticalChart(canvas, d, sl, tp);
 }
 
-function drawChart(id,c,signal,sl,tp,SR){
-    const canvas=document.getElementById("chart_"+id);
-    const ctx=canvas.getContext("2d");ctx.clearRect(0,0,300,120);
-    const all=[...c,...SR.supports,...SR.resistances];
-    if(signal!=="WAIT"){all.push(sl,tp)}
-    const max=Math.max(...all),min=Math.min(...all),Y=v=>110-(v-min)/(max-min)*90,X_END=220;
+function drawTacticalChart(canvas, d, sl, tp) {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const allPoints = [...d.c, d.res, d.sup, sl, tp];
+    const realMax = Math.max(...allPoints), realMin = Math.min(...allPoints);
+    const range = realMax - realMin;
+    const max = realMax + (range * 0.15), min = realMin - (range * 0.15);
+    const getY = (v) => 220 - ((v - min) / (max - min) * 200); 
+    const chartWidth = canvas.width * 0.70;
 
-    ctx.beginPath();ctx.strokeStyle="#444";ctx.lineWidth=1.5;
-    c.forEach((v,i)=>i?ctx.lineTo(i*(X_END/c.length),Y(v)):ctx.moveTo(0,Y(v)));ctx.stroke();
+    // S/R
+    ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(239, 68, 68, 0.6)"; ctx.beginPath(); ctx.moveTo(0, getY(d.res)); ctx.lineTo(chartWidth, getY(d.res)); ctx.stroke();
+    ctx.strokeStyle = "rgba(34, 197, 94, 0.6)"; ctx.beginPath(); ctx.moveTo(0, getY(d.sup)); ctx.lineTo(chartWidth, getY(d.sup)); ctx.stroke();
 
-    const drawL=(val,col,lab,dash=[])=>{
-        if(!val)return;const y=Y(val);ctx.setLineDash(dash);ctx.strokeStyle=col;
-        ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(X_END,y);ctx.stroke();
-        ctx.setLineDash([]);ctx.fillStyle=col;ctx.font="9px Arial";ctx.fillText(lab+":"+smartF(val),X_END+5,y+3);
-    }
-    SR.supports.forEach(s=>drawL(s,"#3b82f6","S",[2,2]));
-    SR.resistances.forEach(r=>drawL(r,"#f59e0b","R",[2,2]));
-    if(signal!=="WAIT"){drawL(sl,"#ef4444","SL",[4,2]);drawL(tp,"#22c55e","TP",[4,2])}
+    // Wykres
+    ctx.setLineDash([]); ctx.strokeStyle = "#818cf8"; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    d.c.forEach((v, i) => { const x = (i / (d.c.length-1)) * chartWidth; i === 0 ? ctx.moveTo(x, getY(v)) : ctx.lineTo(x, getY(v)); });
+    ctx.stroke();
+
+    // Kropka Ceny
+    const lastY = getY(d.price);
+    ctx.fillStyle = d.cls === "buy" ? "#22c55e" : d.cls === "sell" ? "#ef4444" : "#9ca3af";
+    ctx.beginPath(); ctx.arc(chartWidth, lastY, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.font = "bold 11px Arial";
+    ctx.fillText(d.price.toFixed(d.price > 100 ? 2 : 4), chartWidth + 5, lastY + 4);
+    
+    // Etykiety S/R
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "#ef4444"; ctx.fillText("RES " + d.res.toFixed(2), chartWidth + 5, getY(d.res) + 3);
+    ctx.fillStyle = "#22c55e"; ctx.fillText("SUP " + d.sup.toFixed(2), chartWidth + 5, getY(d.sup) + 3);
 }
 
 document.querySelectorAll(".tab").forEach(t=>{
